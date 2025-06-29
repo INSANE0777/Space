@@ -1,0 +1,20 @@
+Assignment: Multi-Agent AI System Using Google ADK (2–3 Days)
+
+Build a multi-agent system using Google ADK that takes a user goal, creates a plan, then routes data between agents, each enriching the output of the previous, until the goal is achieved. Agents must decide the order, pass results, and iterate if the goal isn’t met.
+Example:
+“Find the next SpaceX launch, check weather at that location, then summarize if it may be delayed.”
+Use at least 2–3 public APIs (e.g., OpenWeatherMap, CoinGecko, NewsAPI, SpaceX). Agents must not work in isolation—each must depend on the previous agent’s output.
+
+Deliverables:
+Code (modular agents: planner + enrichment agents)
+Docs: flow, agent logic, APIs, setup
+Evals: test goal satisfaction & agent trajectory
+
+Evaluation:
+
+Agent thaining & data enrichment
+Planner’s routing logic
+Iterative refinement to reach final goal
+Code quality, evals, and docs
+
+Submit: GitHub or ZIP with code, README, and 1–2 evals. Use .env for API keys.

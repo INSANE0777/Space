@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='logo.ico') }}">
+    <title>🧠 Multi-Agent AI Chat</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='chat.css') }}" rel="stylesheet">
+</head>
+<body>    <div class="chat-container">
+        <!-- Chat Main Area -->
+        <div class="chat-main">            <!-- Sidebar with Agents -->
+            <div class="chat-sidebar">
+                <!-- System Header -->
+                <div class="sidebar-system-header">
+                    <div class="system-title">
+                        <i class="fas fa-brain"></i>
+                        <div>
+                            <h1>Multi-Agent AI System</h1>
+                            <p>Intelligent agent coordination platform</p>
+                        </div>
+                    </div>
+                    <div class="system-status">
+                        <div class="status-indicator">
+                            <div class="agent-status online"></div>
+                            <span>System Online</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="agent-list" class="agent-list"></div>
+                
+                <!-- System Status -->
+                <div class="sidebar-footer">
+                    <div class="system-stats">
+                        <div class="stat-row">
+                            <span>System Status:</span>
+                            <span class="stat-value success">Operational</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Active Agents:</span>
+                            <span class="stat-value info">4/4</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Response Time:</span>
+                            <span class="stat-value warning">~2.3s</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Uptime:</span>
+                            <span class="stat-value success" id="uptime">00:00:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>            <!-- Chat Area -->
+            <div class="chat-area">
+                <!-- Messages Container -->
+                <div id="chat-messages" class="chat-messages">
+                    <!-- Messages will be dynamically added here -->
+                </div>
+
+                <!-- Typing Indicator -->
+                <div id="typing-indicator" class="typing-indicator">
+                    <div class="message-avatar">
+                        🤖
+                    </div>
+                    <div class="typing-bubble">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="chat-input-area">
+                    <!-- Input Container -->
+                    <div class="chat-input-container">
+                        <textarea 
+                            id="chat-input" 
+                            class="chat-input" 
+                            placeholder="Ask me about SpaceX launches, weather conditions, or any multi-agent task..."
+                            rows="1"></textarea>
+                        <button id="send-button" class="send-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                    <!-- Input Help Text -->
+                    <div class="input-help">
+                        Press <kbd>Enter</kbd> to send • <kbd>Shift+Enter</kbd> for new line • Use quick actions on the right for common tasks
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar for Quick Actions -->
+            <div class="right-sidebar">
+                <div class="right-sidebar-header">
+                    <h3>Quick Actions</h3>
+                    <p>Common tasks and controls</p>
+                </div>
+                
+                <div class="quick-actions-panel">
+                    <!-- Scroll Control -->
+                    <div class="action-group">
+                        <h4>Controls</h4>                        <button id="auto-scroll-btn" onclick="toggleAutoScroll()" class="quick-action-btn active">
+                            <i class="fas fa-arrows-alt-v"></i>
+                            <span>Auto-scroll</span>
+                        </button>
+                    </div>
+
+                    <!-- Quick Tasks -->
+                    <div class="action-group">
+                        <h4>Quick Tasks</h4>
+                        <button class="quick-action-btn" onclick="chatInterface.sendQuickMessage('Find next SpaceX launch')">
+                            <i class="fas fa-rocket"></i>
+                            <span>Find next SpaceX launch</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="chatInterface.sendQuickMessage('Check weather conditions')">
+                            <i class="fas fa-cloud-sun"></i>
+                            <span>Check weather conditions</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="chatInterface.sendQuickMessage('Analyze launch readiness')">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Analyze launch readiness</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="chatInterface.sendQuickMessage('Get mission summary')">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Get mission summary</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="chatInterface.sendQuickMessage('Show raw data')">
+                            <i class="fas fa-database"></i>
+                            <span>Show raw data</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='chat.js') }}"></script>
+</body>
+</html>

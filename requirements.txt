@@ -1,0 +1,8 @@
+requests 
+python-dotenv 
+google-adk 
+flask 
+google-generativeai 
+langchain 
+langchain-google-genai 
+langchain-core
