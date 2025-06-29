@@ -2,7 +2,6 @@
 
 ---
 
-## 🎯 **What This System Does**
 
 The **Multi-Agent AI System** is an advanced orchestration platform that transforms complex user requests into coordinated multi-agent workflows. Using **Google Gemini AI** for intelligent planning and **specialized domain agents**, it can handle sophisticated tasks that require multiple data sources, sequential logic, and cross-domain analysis.
 
