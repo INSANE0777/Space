@@ -223,17 +223,9 @@ Multi-Agent-AI-System/
 │   
 │   
 │
-├── 🧪 test-scripts/             # Testing & evaluation suite
-│   ├── quick_agent_test.py      # Interactive agent testing
-│   ├── test_individual_agents.py # Comprehensive test suite
-│   ├── test_enhanced_workflow.py # End-to-end testing
-│   ├── automated_evaluation.py  # Performance evaluation
-│   └── README.md                # Testing documentation
+├            # Testing documentation
 │
-├── 📊 evals/                    # Evaluation data & results
-│   ├── test_goals.json          # Test scenarios
-│   └── evaluation_results_*.json # Performance metrics
-│
+├
 ├── ⚙️ Core Files
 │   ├── main.py                  # Main CLI application
 │   ├── web_interface.py         # Web dashboard server
