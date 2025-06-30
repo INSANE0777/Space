@@ -211,9 +211,9 @@ Multi-Agent-AI-System/
 │   └── script.js, chat.js       # JavaScript functionality
 │
 ├── 📚 docs/                     # Documentation & diagrams
-│   ├── agent_logic.md           # Agent implementation details
 │   ├── SYSTEM_ARCHITECTURE_DETAILED.md # Complete technical docs
-│   └── [additional documentation]
+│   
+│   
 │
 ├── 🧪 test-scripts/             # Testing & evaluation suite
 │   ├── quick_agent_test.py      # Interactive agent testing
