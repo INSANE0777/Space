@@ -58,6 +58,11 @@ graph LR
 
 ---
 
+##  **Web Dashboard**
+
+![UI](docs/Screenshot 1.png)
+
+
 ## 🚀 **Setup & Installation**
 
 ### **📋 Prerequisites**

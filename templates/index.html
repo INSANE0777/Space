@@ -1,211 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+<head>    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='logo.png') }}">
     <title>🧠 Multi-Agent AI System Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        slate: {
-                            850: '#17212f',
-                        },
-                        primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                        },
-                        secondary: {
-                            50: '#f5f3ff',
-                            100: '#ede9fe',
-                            200: '#ddd6fe',
-                            300: '#c4b5fd',
-                            400: '#a78bfa',
-                            500: '#8b5cf6',
-                            600: '#7c3aed',
-                            700: '#6d28d9',
-                            800: '#5b21b6',
-                            900: '#4c1d95',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        .terminal-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .terminal-scrollbar::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.1);
-        }
-        
-        .terminal-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(124, 58, 237, 0.4);
-            border-radius: 4px;
-        }
-        
-        .terminal-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(124, 58, 237, 0.6);
-        }
-        
-        .gradient-border {
-            position: relative;
-        }
-        
-        .gradient-border::before {
-            content: '';
-            position: absolute;
-            top: -1px;
-            left: -1px;
-            right: -1px;
-            bottom: -1px;
-            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
-            border-radius: 0.75rem;
-            z-index: -1;
-        }
-        
-        .glow-effect {
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-        }
-        
-        .log-entry {
-            transition: background-color 0.2s ease;
-        }
-        
-        .log-entry:hover {
-            background-color: rgba(15, 23, 42, 0.05);
-        }
-        
-        .agent-card {
-            transition: all 0.3s ease;
-        }
-        
-        .agent-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        .animate-pulse-slow {
-            animation: pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .space-x-4 > * + * { margin-left: 1rem; }
+        .space-x-2 > * + * { margin-left: 0.5rem; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-    <div x-data="agentSystem()" class="h-screen flex overflow-hidden">
+<body class="bg-gray-50 min-h-screen">    <div x-data="agentSystem()" class="h-screen flex">
         <!-- Main Interface - Full Height Layout -->
-        <div class="flex w-full h-full">
-            <!-- Agent Execution Log Panel (One Third Left Side - Full Height) -->
-            <div class="w-1/3 bg-slate-900 flex flex-col h-full border-r border-slate-700">
+        <div class="flex w-full h-full">            <!-- Agent Execution Log Panel (One Third Left Side - Full Height) -->
+            <div class="w-1/3 bg-gray-900 flex flex-col h-full">
                 <!-- Terminal Header -->
-                <div class="bg-slate-800 px-4 py-3 flex items-center justify-between border-b border-slate-700">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                        <h2 class="text-sm font-semibold text-slate-200 ml-2">
-                            <i class="fas fa-terminal mr-2 text-primary-400"></i>
+                <div class="bg-gray-800 px-4 py-3 flex items-center justify-between border-b border-gray-700 flex-shrink-0">
+                    <div class="flex items-center">
+
+                        <h2 class="text-lg font-bold text-white flex items-center">
+                            <i class="fas fa-terminal mr-2 text-green-400"></i>
                             Agent Terminal
                         </h2>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button @click="showAllJsonData()" 
-                                class="bg-slate-700 text-slate-200 px-3 py-1 rounded-lg text-xs hover:bg-slate-600 transition-all flex items-center">
-                            <i class="fas fa-code mr-1 text-xs"></i>
+                    </div>                    <div class="flex space-x-2">                        <button @click="showAllJsonData()" 
+                                class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-code mr-1"></i>
                             JSON
                         </button>
                         <button @click="autoScroll = !autoScroll" 
-                                :class="autoScroll ? 'bg-primary-600 text-white' : 'bg-slate-700 text-slate-300'"
-                                class="px-3 py-1 rounded-lg text-xs hover:opacity-90 transition-all flex items-center">
-                            <i class="fas fa-arrow-down mr-1 text-xs"></i>
-                            <span x-text="autoScroll ? 'Auto' : 'Manual'"></span>
+                                :class="autoScroll ? 'bg-green-600 text-green-100' : 'bg-gray-600 text-gray-300'"
+                                class="px-3 py-1 rounded text-xs hover:opacity-80 transition-all">
+                            <i class="fas fa-arrow-down mr-1"></i>
+                            <span x-text="autoScroll ? 'Auto-scroll' : 'Manual'"></span>
                         </button>
                         <button @click="clearLogs()" 
-                                class="bg-red-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-red-700 transition-colors flex items-center">
-                            <i class="fas fa-trash mr-1 text-xs"></i>
+                                class="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-colors">
+                            <i class="fas fa-trash mr-1"></i>
                             Clear
                         </button>
                     </div>
                 </div>
                 
                 <!-- Terminal Body -->
-                <div class="flex-1 overflow-y-auto bg-gradient-to-br from-slate-900 to-slate-800 p-4 font-mono text-sm terminal-scrollbar" 
+                <div class="flex-1 overflow-y-auto bg-gray-900 p-4 font-mono text-sm" 
                      id="terminal-output"
                      x-ref="terminalOutput">
                      
                     <!-- Welcome Message -->
                     <div x-show="logs.length === 0" class="text-center py-12">
-                        <div class="text-primary-400 text-6xl mb-6">
+                        <div class="text-green-400 text-6xl mb-4">
                             <i class="fas fa-terminal"></i>
                         </div>
-                        <div class="text-primary-300 text-xl font-medium mb-2">Multi-Agent Execution Terminal</div>
-                        <div class="text-slate-500 text-sm mb-6">Ready to execute agent workflows...</div>
-                        <div class="grid grid-cols-2 gap-3 max-w-xs mx-auto">
-                            <div class="bg-slate-800/50 rounded-lg p-3 text-xs text-slate-400">
-                                <i class="fas fa-bolt text-primary-400 mr-1"></i> Real-time logs
-                            </div>
-                            <div class="bg-slate-800/50 rounded-lg p-3 text-xs text-slate-400">
-                                <i class="fas fa-brain text-secondary-400 mr-1"></i> ADK tracking
-                            </div>
-                            <div class="bg-slate-800/50 rounded-lg p-3 text-xs text-slate-400">
-                                <i class="fas fa-plug text-green-400 mr-1"></i> API monitoring
-                            </div>
-                            <div class="bg-slate-800/50 rounded-lg p-3 text-xs text-slate-400">
-                                <i class="fas fa-bug text-red-400 mr-1"></i> Error reporting
-                            </div>
+                        <div class="text-green-400 text-xl mb-2">Multi-Agent Execution Terminal</div>
+                        <div class="text-gray-500 text-sm mb-4">Ready to execute agent workflows...</div>
+                        <div class="text-gray-600 text-xs">
+                            <div class="mb-1">• Real-time agent execution logs</div>
+                            <div class="mb-1">• Google ADK coordination tracking</div>
+                            <div class="mb-1">• API call monitoring</div>
+                            <div>• Error detection and reporting</div>
                         </div>
                     </div>
                     
                     <!-- System Status Header -->
-                    <div x-show="logs.length > 0" class="border-b border-slate-700 pb-3 mb-4">
-                        <div class="text-primary-300 font-semibold text-sm">
-                            <i class="fas fa-robot mr-2"></i>MULTI-AGENT AI SYSTEM v1.2
+                    <div x-show="logs.length > 0" class="border-b border-gray-700 pb-2 mb-4">
+                        <div class="text-green-400 font-bold">
+                            <i class="fas fa-robot mr-2"></i>MULTI-AGENT AI SYSTEM v1.0
                         </div>
-                        <div class="text-slate-500 text-xs mt-1 flex justify-between">
-                            <span>Session: <span x-text="new Date().toLocaleString()"></span></span>
-                            <span>Agents: <span class="text-primary-300">4 active</span></span>
+                        <div class="text-gray-500 text-xs mt-1">
+                            Session started: <span x-text="new Date().toLocaleString()"></span>
                         </div>
                     </div>
                     
                     <!-- Log Entries -->
                     <template x-for="(log, index) in logs" :key="index">
-                        <div class="mb-2 flex items-start p-2 rounded log-entry" 
+                        <div class="mb-2 flex items-start" 
                              :class="getLogClass(log.message)">
-                            <span class="text-slate-500 mr-3 text-xs flex-shrink-0 font-mono" 
+                            <span class="text-gray-500 mr-3 text-xs flex-shrink-0 font-mono" 
                                   x-text="log.timestamp"></span>
                             <div class="flex-1">
                                 <span :class="getMessageClass(log.message)" 
@@ -216,205 +91,131 @@
                     
                     <!-- Live Status Indicator -->
                     <div x-show="loading || evaluationLoading" 
-                         class="mt-4 p-3 bg-slate-800/50 rounded-lg border border-primary-500/30">
-                        <div class="text-primary-300 flex items-center">
+                         class="mt-4 p-3 bg-gray-800 rounded border border-yellow-600">
+                        <div class="text-yellow-400 animate-pulse flex items-center">
                             <i class="fas fa-spinner fa-spin mr-2"></i>
                             <span x-text="loading ? 'Executing agent workflow...' : 'Running system evaluation...'"></span>
                         </div>
-                        <div class="text-slate-500 text-xs mt-2 pl-6" x-text="getCurrentStatus()"></div>
+                        <div class="text-gray-400 text-xs mt-1" x-text="getCurrentStatus()"></div>
                     </div>
                     
                     <!-- Command Prompt -->
                     <div x-show="!loading && !evaluationLoading && logs.length > 0" 
-                         class="mt-4 flex items-center text-primary-400 p-2 bg-slate-800/30 rounded-lg">
-                        <span class="mr-2 font-bold">$</span>
-                        <span class="animate-pulse-slow">_</span>
-                        <span class="ml-2 text-slate-500 text-xs">Ready for next command</span>
+                         class="mt-4 flex items-center text-green-400">
+                        <span class="mr-2">$</span>
+                        <span class="animate-pulse">_</span>
+                        <span class="ml-2 text-gray-500 text-xs">Ready for next command</span>
                     </div>
                 </div>
                 
                 <!-- Terminal Footer -->
-                <div class="bg-slate-800 px-4 py-2 border-t border-slate-700">
-                    <div class="flex justify-between items-center text-xs text-slate-500">
+                <div class="bg-gray-800 px-4 py-2 border-t border-gray-700 flex-shrink-0">
+                    <div class="flex justify-between items-center text-xs text-gray-400">
                         <div class="flex items-center space-x-4">
                             <span class="flex items-center">
-                                <span class="status-dot bg-green-500"></span>
-                                <span class="text-slate-300">Connected</span>
+                                <i class="fas fa-circle text-green-500 mr-1"></i>
+                                Connected
                             </span>
                             <span x-text="'Logs: ' + logs.length"></span>
-                            <span x-show="systemStatus?.latest_evaluation" class="flex items-center">
-                                Success: <span x-text="systemStatus?.latest_evaluation?.success_rate + '%'" class="text-green-400 ml-1"></span>
+                            <span x-show="systemStatus?.latest_evaluation">
+                                Success Rate: <span x-text="systemStatus?.latest_evaluation?.success_rate + '%'" class="text-green-400"></span>
                             </span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <span>ADK Terminal v1.2</span>
+                            <span>ADK Terminal v1.0</span>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Main Content (Right Side - Two Thirds Width) -->
-            <div class="w-2/3 flex flex-col h-full overflow-hidden">
+            </div>            <!-- Main Content (Right Side - Two Thirds Width) -->
+            <div class="w-2/3 flex flex-col h-full overflow-y-auto bg-gray-50">
                 <!-- Header Section -->
-                <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white p-6 flex-shrink-0 shadow-md">
+                <div class="bg-white shadow-md p-6 flex-shrink-0">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-2xl font-bold flex items-center">
-                                <i class="fas fa-brain mr-3 text-primary-300"></i>
+                            <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-brain mr-3 text-blue-600"></i>
                                 Multi-Agent AI System
                             </h1>
-                            <p class="text-slate-400 mt-1 text-sm">Google ADK-powered intelligent agent coordination</p>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="bg-green-500/20 text-green-400 px-4 py-2 rounded-full text-sm font-medium flex items-center">
-                                <span class="status-dot bg-green-500"></span>
+                            <p class="text-gray-600 mt-2">Google ADK-powered intelligent agent coordination</p>
+                        </div>                        <div class="flex items-center space-x-4">
+                            <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                <i class="fas fa-circle text-green-500 mr-1"></i>
                                 System Active
                             </div>
-                            <a href="/chat" class="bg-secondary-600 text-white px-4 py-2 rounded-lg hover:bg-secondary-700 transition-all flex items-center">
+                            <a href="/chat" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
                                 <i class="fas fa-comments mr-2"></i>
                                 Chat Interface
                             </a>
-                            <button @click="loadStatus()" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-all flex items-center">
+                            <button @click="loadStatus()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                                 <i class="fas fa-sync-alt mr-2"></i>
-                                Refresh
+                                Refresh Status
                             </button>
                         </div>
                     </div>
-                </div>
-                
-                <!-- System Metrics -->
-                <div class="grid grid-cols-4 gap-3 p-4 bg-slate-700 text-white border-b border-slate-600 flex-shrink-0" x-show="systemStatus">
-                    <div class="bg-gradient-to-br from-green-600/20 to-green-700/20 rounded-xl p-3 border border-green-500/20">
+                </div>                <!-- System Metrics -->
+                <div class="grid grid-cols-4 gap-2 p-3 bg-white border-b border-gray-200 flex-shrink-0" x-show="systemStatus">
+                    <div class="bg-green-50 rounded-lg p-2 border border-green-200">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs font-medium text-green-300">Success Rate</p>
-                                <p class="text-xl font-bold" x-text="systemStatus?.latest_evaluation?.success_rate + '%'">--</p>
+                                <p class="text-xs font-medium text-green-600">Success Rate</p>
+                                <p class="text-lg font-bold text-green-700" x-text="systemStatus?.latest_evaluation?.success_rate + '%'">--</p>
                             </div>
-                            <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                            <i class="fas fa-check-circle text-green-500 text-lg"></i>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-br from-blue-600/20 to-blue-700/20 rounded-xl p-3 border border-blue-500/20">
+                    <div class="bg-blue-50 rounded-lg p-2 border border-blue-200">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs font-medium text-blue-300">ADK Confidence</p>
-                                <p class="text-xl font-bold" x-text="systemStatus?.latest_evaluation?.average_confidence + '%'">--</p>
+                                <p class="text-xs font-medium text-blue-600">ADK Confidence</p>
+                                <p class="text-lg font-bold text-blue-700" x-text="systemStatus?.latest_evaluation?.average_confidence + '%'">--</p>
                             </div>
-                            <i class="fas fa-brain text-blue-400 text-xl"></i>
+                            <i class="fas fa-brain text-blue-500 text-lg"></i>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-br from-purple-600/20 to-purple-700/20 rounded-xl p-3 border border-purple-500/20">
+                    <div class="bg-purple-50 rounded-lg p-2 border border-purple-200">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs font-medium text-purple-300">Quality Score</p>
-                                <p class="text-xl font-bold" x-text="systemStatus?.latest_evaluation?.average_quality_score + '%'">--</p>
+                                <p class="text-xs font-medium text-purple-600">Quality Score</p>
+                                <p class="text-lg font-bold text-purple-700" x-text="systemStatus?.latest_evaluation?.average_quality_score + '%'">--</p>
                             </div>
-                            <i class="fas fa-star text-purple-400 text-xl"></i>
+                            <i class="fas fa-star text-purple-500 text-lg"></i>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-br from-amber-600/20 to-amber-700/20 rounded-xl p-3 border border-amber-500/20">
+                    <div class="bg-orange-50 rounded-lg p-2 border border-orange-200">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs font-medium text-amber-300">Avg Time</p>
-                                <p class="text-xl font-bold" x-text="systemStatus?.latest_evaluation?.average_execution_time + 's'">--</p>
+                                <p class="text-xs font-medium text-orange-600">Avg Time</p>
+                                <p class="text-lg font-bold text-orange-700" x-text="systemStatus?.latest_evaluation?.average_execution_time + 's'">--</p>
                             </div>
-                            <i class="fas fa-clock text-amber-400 text-xl"></i>
+                            <i class="fas fa-clock text-orange-500 text-lg"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Scrollable Content Area -->
-                <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-gradient-to-br from-slate-50 to-slate-100">
-                    <!-- Agent Cards -->
-                    <div class="grid grid-cols-4 gap-4">
-                        <div class="agent-card bg-white rounded-xl p-4 shadow-sm border border-slate-200">
-                            <div class="flex items-center">
-                                <div class="bg-primary-100 p-2 rounded-lg mr-3">
-                                    <i class="fas fa-rocket text-primary-600 text-lg"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-slate-800">SpaceX Agent</div>
-                                    <div class="text-xs text-slate-500">Data retrieval</div>
-                                </div>
-                            </div>
-                            <div class="mt-3 flex justify-between text-xs">
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
-                                <span class="text-slate-500">v1.3.2</span>
-                            </div>
-                        </div>
-                        
-                        <div class="agent-card bg-white rounded-xl p-4 shadow-sm border border-slate-200">
-                            <div class="flex items-center">
-                                <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                                    <i class="fas fa-cloud-sun text-blue-600 text-lg"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-slate-800">Weather Agent</div>
-                                    <div class="text-xs text-slate-500">Forecast analysis</div>
-                                </div>
-                            </div>
-                            <div class="mt-3 flex justify-between text-xs">
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
-                                <span class="text-slate-500">v1.2.1</span>
-                            </div>
-                        </div>
-                        
-                        <div class="agent-card bg-white rounded-xl p-4 shadow-sm border border-slate-200">
-                            <div class="flex items-center">
-                                <div class="bg-purple-100 p-2 rounded-lg mr-3">
-                                    <i class="fas fa-brain text-purple-600 text-lg"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-slate-800">ADK Agent</div>
-                                    <div class="text-xs text-slate-500">Coordination</div>
-                                </div>
-                            </div>
-                            <div class="mt-3 flex justify-between text-xs">
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
-                                <span class="text-slate-500">v2.0.4</span>
-                            </div>
-                        </div>
-                        
-                        <div class="agent-card bg-white rounded-xl p-4 shadow-sm border border-slate-200">
-                            <div class="flex items-center">
-                                <div class="bg-amber-100 p-2 rounded-lg mr-3">
-                                    <i class="fas fa-chart-line text-amber-600 text-lg"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-slate-800">Analytics Agent</div>
-                                    <div class="text-xs text-slate-500">Performance</div>
-                                </div>
-                            </div>
-                            <div class="mt-3 flex justify-between text-xs">
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
-                                <span class="text-slate-500">v1.1.0</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Goal Input Section -->
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-                        <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-                            <i class="fas fa-bullseye mr-2 text-primary-600"></i>
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">                    <!-- Goal Input Section -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-robot mr-2 text-green-600"></i>
                             Agent Goal Input
-                        </h2>
-                        <div class="space-y-4">
+                        </h2>                        <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Natural Language Goal</label>
-                                <div class="flex space-x-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Natural Language Goal</label>
+                                <div class="flex space-x-3">
                                     <textarea 
                                         x-model="currentGoal"
-                                        class="flex-1 p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white shadow-sm"
+                                        class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         rows="4"
                                         placeholder="Enter your goal in natural language...&#10;&#10;Example: Find the next SpaceX launch, check weather at that location, and summarize if it may be delayed."
                                     ></textarea>
-                                    <div class="flex flex-col space-y-3">
+                                    <div class="flex flex-col space-y-2">
                                         <button @click="runGoal()" 
                                                 :disabled="loading || !currentGoal.trim()"
-                                                :class="loading ? 'bg-slate-400' : 'bg-gradient-to-r from-primary-600 to-secondary-600 hover:opacity-90'"
-                                                class="text-white px-6 py-3 rounded-xl font-medium transition-all disabled:cursor-not-allowed whitespace-nowrap shadow-md glow-effect">
+                                                :class="loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'"
+                                                class="text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:cursor-not-allowed whitespace-nowrap">
                                             <span x-show="!loading" class="flex items-center justify-center">
                                                 <i class="fas fa-play mr-2"></i>
                                                 Execute
@@ -426,11 +227,11 @@
                                         </button>
                                         <button @click="runEvaluation()" 
                                                 :disabled="evaluationLoading"
-                                                :class="evaluationLoading ? 'bg-slate-400' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90'"
-                                                class="text-white px-6 py-3 rounded-xl font-medium transition-all disabled:cursor-not-allowed whitespace-nowrap shadow">
+                                                :class="evaluationLoading ? 'bg-gray-400' : 'bg-purple-600 hover:bg-purple-700'"
+                                                class="text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:cursor-not-allowed whitespace-nowrap">
                                             <span x-show="!evaluationLoading">
                                                 <i class="fas fa-flask mr-2"></i>
-                                                Evaluate System
+                                                Evaluate
                                             </span>
                                             <span x-show="evaluationLoading">
                                                 <i class="fas fa-spinner fa-spin mr-2"></i>
@@ -443,138 +244,97 @@
                             
                             <!-- Quick Goal Templates -->
                             <div>
-                                <p class="text-sm font-medium text-slate-700 mb-2">Quick Templates:</p>
-                                <div class="grid grid-cols-3 gap-3">
+                                <p class="text-sm font-medium text-gray-700 mb-2">Quick Templates:</p>                                <div class="grid grid-cols-3 gap-2">
                                     <button @click="currentGoal = 'Find the next SpaceX launch, check weather at that location, and summarize if it may be delayed.'" 
-                                            class="text-left p-3 bg-gradient-to-br from-blue-50 to-blue-100 text-slate-800 rounded-xl hover:bg-blue-100 transition-all border border-blue-200">
-                                        <div class="font-medium text-sm flex items-center">
-                                            <i class="fas fa-rocket text-blue-500 mr-2"></i>
-                                            SpaceX + Weather
-                                        </div>
-                                        <div class="text-xs text-slate-600 mt-1">Retrieve launch data and weather analysis</div>
+                                            class="text-center p-2 bg-blue-50 text-blue-800 rounded-lg hover:bg-blue-100 transition-colors border border-blue-200">
+                                        <div class="font-medium text-sm">🚀 SpaceX + Weather</div>
                                     </button>
                                     <button @click="currentGoal = 'Get information about the next SpaceX mission and launch details.'" 
-                                            class="text-left p-3 bg-gradient-to-br from-green-50 to-green-100 text-slate-800 rounded-xl hover:bg-green-100 transition-all border border-green-200">
-                                        <div class="font-medium text-sm flex items-center">
-                                            <i class="fas fa-satellite text-green-500 mr-2"></i>
-                                            SpaceX Mission
-                                        </div>
-                                        <div class="text-xs text-slate-600 mt-1">Retrieve mission details</div>
+                                            class="text-center p-2 bg-green-50 text-green-800 rounded-lg hover:bg-green-100 transition-colors border border-green-200">
+                                        <div class="font-medium text-sm">🛸 SpaceX Mission</div>
                                     </button>
                                     <button @click="currentGoal = 'Check weather conditions at Kennedy Space Center for rocket launches.'" 
-                                            class="text-left p-3 bg-gradient-to-br from-cyan-50 to-cyan-100 text-slate-800 rounded-xl hover:bg-cyan-100 transition-all border border-cyan-200">
-                                        <div class="font-medium text-sm flex items-center">
-                                            <i class="fas fa-cloud-sun text-cyan-500 mr-2"></i>
-                                            Weather Analysis
-                                        </div>
-                                        <div class="text-xs text-slate-600 mt-1">Forecast for launch locations</div>
+                                            class="text-center p-2 bg-purple-50 text-purple-800 rounded-lg hover:bg-purple-100 transition-colors border border-purple-200">
+                                        <div class="font-medium text-sm">🌦️ Weather Analysis</div>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Results Section -->
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                    </div>                    <!-- Results Section -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg font-semibold text-slate-800 flex items-center">
-                                <i class="fas fa-chart-line mr-2 text-primary-600"></i>
+                            <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-chart-line mr-2 text-blue-600"></i>
                                 Execution Results
                             </h2>
                             <button x-show="lastResult" 
                                     @click="showJsonModal = true"
-                                    class="bg-slate-700 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-all text-sm flex items-center">
+                                    class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm">
                                 <i class="fas fa-code mr-2"></i>
                                 View Raw JSON
                             </button>
                         </div>
                         
-                        <div x-show="!lastResult && !loading" class="text-center text-slate-400 py-8">
-                            <div class="inline-block p-5 rounded-full bg-slate-100 mb-4">
-                                <i class="fas fa-robot text-3xl text-slate-300"></i>
-                            </div>
-                            <p class="text-slate-600">Execute a goal to see results here</p>
-                            <p class="text-sm mt-2 text-slate-500">Watch the terminal on the left for real-time execution logs</p>
+                        <div x-show="!lastResult && !loading" class="text-center text-gray-500 py-8">
+                            <i class="fas fa-robot text-4xl mb-4 opacity-50"></i>
+                            <p>Execute a goal to see results here</p>
+                            <p class="text-sm mt-2">Watch the terminal on the left for real-time execution logs</p>
                         </div>
                         
-                        <div x-show="loading" class="text-center text-slate-400 py-8">
-                            <div class="inline-block p-5 rounded-full bg-blue-50 mb-4 animate-pulse">
-                                <i class="fas fa-spinner fa-spin text-3xl text-primary-600"></i>
-                            </div>
-                            <p class="text-slate-600">Agents are working...</p>
-                            <p class="text-sm mt-2 text-slate-500">Check the terminal for live progress updates</p>
+                        <div x-show="loading" class="text-center text-gray-500 py-8">
+                            <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
+                            <p>Agents are working...</p>
+                            <p class="text-sm mt-2">Check the terminal for live progress updates</p>
                         </div>
                         
-                        <div x-show="lastResult" class="space-y-5">
+                        <div x-show="lastResult" class="space-y-4">
                             <!-- Final Summary -->
-                            <div class="gradient-border p-4 rounded-xl bg-white">
-                                <div class="p-4 bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl">
-                                    <h3 class="font-semibold text-primary-800 mb-2 flex items-center">
-                                        <i class="fas fa-target mr-2"></i>
-                                        Final Result
-                                    </h3>
-                                    <p class="text-primary-700" x-text="lastResult?.result?.summary"></p>
-                                </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <h3 class="font-medium text-blue-800 mb-2 flex items-center">
+                                    <i class="fas fa-target mr-2"></i>
+                                    Final Result
+                                </h3>
+                                <p class="text-blue-700" x-text="lastResult?.result?.summary"></p>
                             </div>
                             
                             <!-- ADK Validation -->
-                            <div x-show="lastResult?.result?.adk_validation" class="gradient-border p-4 rounded-xl bg-white">
-                                <div class="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl">
-                                    <h3 class="font-semibold text-purple-800 mb-3 flex items-center">
-                                        <i class="fas fa-brain mr-2"></i>
-                                        Google ADK Validation
-                                    </h3>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                                            <div class="text-sm text-slate-600 mb-1">Confidence Score</div>
-                                            <div class="text-2xl font-bold text-purple-600" x-text="lastResult?.result?.adk_validation?.confidence + '%'"></div>
-                                            <div class="mt-2">
-                                                <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-purple-500" :style="'width: ' + lastResult?.result?.adk_validation?.confidence + '%'"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                                            <div class="text-sm text-slate-600 mb-1">Quality Score</div>
-                                            <div class="text-2xl font-bold text-purple-600" x-text="lastResult?.result?.adk_validation?.quality_score + '%'"></div>
-                                            <div class="mt-2">
-                                                <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-purple-500" :style="'width: ' + lastResult?.result?.adk_validation?.quality_score + '%'"></div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div x-show="lastResult?.result?.adk_validation" class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                <h3 class="font-medium text-purple-800 mb-3 flex items-center">
+                                    <i class="fas fa-brain mr-2"></i>
+                                    Google ADK Validation
+                                </h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-white p-3 rounded border">
+                                        <div class="text-sm text-gray-600">Confidence Score</div>
+                                        <div class="text-2xl font-bold text-purple-700" x-text="lastResult?.result?.adk_validation?.confidence + '%'"></div>
+                                    </div>
+                                    <div class="bg-white p-3 rounded border">
+                                        <div class="text-sm text-gray-600">Quality Score</div>
+                                        <div class="text-2xl font-bold text-purple-700" x-text="lastResult?.result?.adk_validation?.quality_score + '%'"></div>
                                     </div>
                                 </div>
                             </div>
                             
                             <!-- Agent Data Chain -->
                             <div class="space-y-3">
-                                <h3 class="font-medium text-slate-800 flex items-center">
+                                <h3 class="font-medium text-gray-800 flex items-center">
                                     <i class="fas fa-sitemap mr-2"></i>
                                     Agent Data Pipeline
                                 </h3>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div x-show="lastResult?.result?.spacex" class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
-                                        <h4 class="font-medium text-green-800 text-sm flex items-center mb-2">
+                                <div class="space-y-2">
+                                    <div x-show="lastResult?.result?.spacex" class="bg-green-50 border border-green-200 rounded-lg p-3">
+                                        <h4 class="font-medium text-green-800 text-sm flex items-center">
                                             <i class="fas fa-rocket mr-2"></i>
                                             SpaceX Agent Output
                                         </h4>
-                                        <div class="text-sm text-green-700 space-y-1">
-                                            <div><span class="font-medium">Mission:</span> <span x-text="lastResult?.result?.spacex?.mission"></span></div>
-                                            <div><span class="font-medium">Location:</span> <span x-text="lastResult?.result?.spacex?.coordinates?.name"></span></div>
-                                            <div><span class="font-medium">Date:</span> <span x-text="lastResult?.result?.spacex?.date"></span></div>
-                                        </div>
+                                        <p class="text-sm text-green-700 mt-1" x-text="'Mission: ' + lastResult?.result?.spacex?.mission + ' at ' + lastResult?.result?.spacex?.coordinates?.name"></p>
                                     </div>
-                                    <div x-show="lastResult?.result?.weather" class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
-                                        <h4 class="font-medium text-blue-800 text-sm flex items-center mb-2">
+                                    <div x-show="lastResult?.result?.weather" class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                        <h4 class="font-medium text-blue-800 text-sm flex items-center">
                                             <i class="fas fa-cloud-sun mr-2"></i>
                                             Weather Agent Output
                                         </h4>
-                                        <div class="text-sm text-blue-700 space-y-1">
-                                            <div><span class="font-medium">Temperature:</span> <span x-text="lastResult?.result?.weather?.temperature + '°C'"></span></div>
-                                            <div><span class="font-medium">Wind:</span> <span x-text="lastResult?.result?.weather?.wind_speed + ' m/s'"></span></div>
-                                            <div><span class="font-medium">Clouds:</span> <span x-text="lastResult?.result?.weather?.clouds + '%'"></span></div>
-                                        </div>
+                                        <p class="text-sm text-blue-700 mt-1" x-text="'Temperature: ' + lastResult?.result?.weather?.temperature + '°C, Wind: ' + lastResult?.result?.weather?.wind_speed + ' m/s, Clouds: ' + lastResult?.result?.weather?.clouds + '%'"></p>
                                     </div>
                                 </div>
                             </div>
@@ -582,49 +342,35 @@
                     </div>
 
                     <!-- Evaluation Results -->
-                    <div x-show="evaluationResult" class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-                        <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-                            <i class="fas fa-chart-bar mr-2 text-secondary-600"></i>
+                    <div x-show="evaluationResult" class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-chart-bar mr-2 text-purple-600"></i>
                             System Evaluation Results
                         </h2>
                         
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 text-center">
-                                <h3 class="font-medium text-green-800 mb-2">Success Rate</h3>
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                                <h3 class="font-medium text-green-800">Success Rate</h3>
                                 <p class="text-3xl font-bold text-green-600" x-text="evaluationResult?.success_rate + '%'">--</p>
-                                <div class="mt-2">
-                                    <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
-                                        <div class="h-full bg-green-500" :style="'width: ' + evaluationResult?.success_rate + '%'"></div>
-                                    </div>
-                                </div>
                             </div>
-                            <div class="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-4 text-center">
-                                <h3 class="font-medium text-blue-800 mb-2">Tests Run</h3>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                                <h3 class="font-medium text-blue-800">Tests Run</h3>
                                 <p class="text-3xl font-bold text-blue-600" x-text="evaluationResult?.total_tests">--</p>
-                                <div class="text-sm text-slate-600 mt-1">scenarios tested</div>
                             </div>
-                            <div class="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-4 text-center">
-                                <h3 class="font-medium text-purple-800 mb-2">Avg Quality</h3>
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
+                                <h3 class="font-medium text-purple-800">Avg Quality</h3>
                                 <p class="text-3xl font-bold text-purple-600" x-text="evaluationResult?.average_quality_score + '%'">--</p>
-                                <div class="mt-2">
-                                    <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
-                                        <div class="h-full bg-purple-500" :style="'width: ' + evaluationResult?.average_quality_score + '%'"></div>
-                                    </div>
-                                </div>
                             </div>
-                            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 text-center">
-                                <h3 class="font-medium text-amber-800 mb-2">Avg Time</h3>
-                                <p class="text-3xl font-bold text-amber-600" x-text="evaluationResult?.average_execution_time + 's'">--</p>
-                                <div class="text-sm text-slate-600 mt-1">per execution</div>
+                            <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
+                                <h3 class="font-medium text-orange-800">Avg Time</h3>
+                                <p class="text-3xl font-bold text-orange-600" x-text="evaluationResult?.average_execution_time + 's'">--</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <script>
+    </div><script>
         function agentSystem() {
             return {
                 currentGoal: '',
@@ -632,24 +378,17 @@
                 evaluationLoading: false,
                 lastResult: null,
                 evaluationResult: null,
-                systemStatus: {
-                    latest_evaluation: {
-                        success_rate: 92,
-                        average_confidence: 87,
-                        average_quality_score: 89,
-                        average_execution_time: 4.2
-                    }
-                },
+                systemStatus: null,
                 logs: [],
                 autoScroll: true,
 
                 getLogClass(message) {
-                    if (message.includes('ERROR') || message.includes('❌')) return 'bg-red-500/10';
-                    if (message.includes('SUCCESS') || message.includes('✅')) return 'bg-green-500/10';
-                    if (message.includes('WARNING') || message.includes('⚠️')) return 'bg-yellow-500/10';
-                    if (message.includes('🧠') || message.includes('ADK')) return 'bg-purple-500/10';
-                    if (message.includes('🚀') || message.includes('SpaceX')) return 'bg-blue-500/10';
-                    if (message.includes('🌍') || message.includes('Weather')) return 'bg-cyan-500/10';
+                    if (message.includes('ERROR') || message.includes('❌')) return 'border-l-4 border-red-500 pl-2';
+                    if (message.includes('SUCCESS') || message.includes('✅')) return 'border-l-4 border-green-500 pl-2';
+                    if (message.includes('WARNING') || message.includes('⚠️')) return 'border-l-4 border-yellow-500 pl-2';
+                    if (message.includes('🧠') || message.includes('ADK')) return 'border-l-4 border-purple-500 pl-2';
+                    if (message.includes('🚀') || message.includes('SpaceX')) return 'border-l-4 border-blue-500 pl-2';
+                    if (message.includes('🌍') || message.includes('Weather')) return 'border-l-4 border-cyan-500 pl-2';
                     return '';
                 },
 
@@ -660,9 +399,9 @@
                     if (message.includes('🧠') || message.includes('ADK')) return 'text-purple-400';
                     if (message.includes('🚀') || message.includes('SpaceX')) return 'text-blue-400';
                     if (message.includes('🌍') || message.includes('Weather')) return 'text-cyan-400';
-                    if (message.includes('Starting') || message.includes('Executing')) return 'text-primary-300';
+                    if (message.includes('Starting') || message.includes('Executing')) return 'text-yellow-300';
                     if (message.includes('completed') || message.includes('finished')) return 'text-green-300';
-                    return 'text-slate-300';
+                    return 'text-green-400';
                 },
 
                 formatLogMessage(message) {
@@ -673,7 +412,7 @@
                     
                     // Highlight agent names
                     message = message.replace(/(spacex_agent|weather_agent|summary_agent|google_adk_agent)/g, 
-                        '<span class="text-primary-300 font-semibold">$1</span>');
+                        '<span class="text-orange-300 font-semibold">$1</span>');
                     
                     return message;
                 },
@@ -715,44 +454,48 @@
                         type: 'info'
                     });
                     
-                    // Simulate API call with timeout
-                    setTimeout(() => {
-                        this.lastResult = {
-                            result: {
-                                summary: "Based on the analysis, the next SpaceX launch is scheduled for June 15, 2023 at 14:30 UTC. Weather conditions at Kennedy Space Center show a 30% chance of precipitation with moderate winds. The launch is likely to proceed as scheduled.",
-                                adk_validation: {
-                                    confidence: 87,
-                                    quality_score: 92
-                                },
-                                spacex: {
-                                    mission: "Starlink Group 5-10",
-                                    coordinates: {
-                                        name: "Kennedy Space Center"
-                                    },
-                                    date: "June 15, 2023 14:30 UTC"
-                                },
-                                weather: {
-                                    temperature: 28,
-                                    wind_speed: 5.4,
-                                    clouds: 30
-                                }
-                            }
-                        };
+                    try {
+                        const response = await fetch('/api/run_goal', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                goal: this.currentGoal
+                            })
+                        });
                         
-                        // Add simulated logs
-                        this.logs = [
-                            { timestamp: new Date().toLocaleTimeString(), message: "🧠 ADK: Goal parsed successfully" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "🚀 SpaceX Agent: Retrieving launch data" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "✅ SpaceX Agent: Found next launch - Starlink Group 5-10 on June 15" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "🌤️ Weather Agent: Fetching conditions for Kennedy Space Center" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "✅ Weather Agent: Retrieved weather data - 28°C, 5.4 m/s wind" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "🧠 ADK: Coordinating data between agents" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "📊 Summary Agent: Generating final analysis" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "✅ Workflow completed successfully in 4.2s" }
-                        ];
+                        const data = await response.json();
                         
+                        if (data.success) {
+                            this.lastResult = data;
+                            this.logs = data.logs || [];
+                            this.logs.push({
+                                timestamp: new Date().toLocaleTimeString(),
+                                message: '🎉 Workflow execution completed successfully!',
+                                type: 'success'
+                            });
+                        } else {
+                            this.logs = data.logs || [];
+                            this.logs.push({
+                                timestamp: new Date().toLocaleTimeString(),
+                                message: `❌ Execution failed: ${data.error}`,
+                                type: 'error'
+                            });
+                            alert('Error: ' + data.error);
+                        }
+                        
+                        this.scrollToBottom();
+                    } catch (error) {
+                        this.logs.push({
+                            timestamp: new Date().toLocaleTimeString(),
+                            message: `❌ Network error: ${error.message}`,
+                            type: 'error'
+                        });
+                        alert('Network error: ' + error.message);
+                    } finally {
                         this.loading = false;
-                    }, 2000);
+                    }
                 },
 
                 async runEvaluation() {
@@ -767,33 +510,51 @@
                         type: 'info'
                     });
                     
-                    // Simulate evaluation
-                    setTimeout(() => {
-                        this.evaluationResult = {
-                            success_rate: 92,
-                            total_tests: 25,
-                            average_quality_score: 89,
-                            average_execution_time: 4.2
-                        };
+                    try {
+                        const response = await fetch('/api/evaluate', {
+                            method: 'POST'
+                        });
                         
-                        // Add simulated logs
-                        this.logs = [
-                            { timestamp: new Date().toLocaleTimeString(), message: "🧠 ADK: Starting evaluation sequence" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "🔬 Running scenario 1: SpaceX launch retrieval" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "✅ Scenario 1 completed successfully" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "🔬 Running scenario 2: Weather analysis" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "✅ Scenario 2 completed successfully" },
-                            { timestamp: new Date().toLocaleTimeString(), message: "📊 Evaluating 25 test scenarios..." },
-                            { timestamp: new Date().toLocaleTimeString(), message: "✅ System evaluation completed - 92% success rate" }
-                        ];
+                        const data = await response.json();
                         
+                        if (data.success) {
+                            this.evaluationResult = data.evaluation;
+                            this.logs = data.logs || [];
+                            this.logs.push({
+                                timestamp: new Date().toLocaleTimeString(),
+                                message: '✅ System evaluation completed successfully!',
+                                type: 'success'
+                            });
+                        } else {
+                            this.logs = data.logs || [];
+                            this.logs.push({
+                                timestamp: new Date().toLocaleTimeString(),
+                                message: `❌ Evaluation failed: ${data.error}`,
+                                type: 'error'
+                            });
+                            alert('Evaluation error: ' + data.error);
+                        }
+                        
+                        this.scrollToBottom();
+                    } catch (error) {
+                        this.logs.push({
+                            timestamp: new Date().toLocaleTimeString(),
+                            message: `❌ Network error: ${error.message}`,
+                            type: 'error'
+                        });
+                        alert('Network error: ' + error.message);
+                    } finally {
                         this.evaluationLoading = false;
-                    }, 3000);
+                    }
                 },
 
                 async clearLogs() {
-                    this.logs = [];
-                },
+                    try {
+                        await fetch('/api/clear_logs', { method: 'POST' });
+                        this.logs = [];
+                    } catch (error) {
+                        console.error('Failed to clear logs:', error);
+                    }                },
 
                 scrollToBottom() {
                     if (this.autoScroll) {
@@ -807,15 +568,13 @@
                 },
 
                 async loadStatus() {
-                    // Simulate status loading
-                    this.systemStatus = {
-                        latest_evaluation: {
-                            success_rate: 92,
-                            average_confidence: 87,
-                            average_quality_score: 89,
-                            average_execution_time: 4.2
-                        }
-                    };
+                    try {
+                        const response = await fetch('/api/agent_status');
+                        const data = await response.json();
+                        this.systemStatus = data;
+                    } catch (error) {
+                        console.error('Failed to load status:', error);
+                    }
                 },
 
                 init() {
@@ -825,8 +584,7 @@
                     this.$watch('logs', () => {
                         this.scrollToBottom();
                     });
-                }
-            }
+                }            }
         }
 
         // JSON Modal functionality
@@ -851,28 +609,30 @@
     </script>
 
     <!-- JSON Modal -->
-    <div id="jsonModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4" onclick="hideJsonModal()">
-        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
-            <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-6 py-4 flex items-center justify-between">
-                <h3 class="text-lg font-semibold flex items-center">
-                    <i class="fas fa-code mr-2"></i>
-                    System Data JSON
-                </h3>
-                <button onclick="hideJsonModal()" class="text-slate-300 hover:text-white transition-colors">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto max-h-[70vh] bg-slate-900">
-                <pre id="jsonContent" class="bg-slate-800 text-slate-200 p-5 rounded-lg text-sm font-mono overflow-x-auto"></pre>
-            </div>
-            <div class="bg-slate-800 px-6 py-3 flex justify-end space-x-3">
-                <button onclick="copyJsonToClipboard()" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors flex items-center">
-                    <i class="fas fa-copy mr-2"></i>
-                    Copy to Clipboard
-                </button>
-                <button onclick="hideJsonModal()" class="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors">
-                    Close
-                </button>
+    <div id="jsonModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" onclick="hideJsonModal()">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-hidden" onclick="event.stopPropagation()">
+                <div class="bg-gray-800 text-white px-6 py-4 flex items-center justify-between">
+                    <h3 class="text-lg font-semibold flex items-center">
+                        <i class="fas fa-code mr-2"></i>
+                        All JSON Data
+                    </h3>
+                    <button onclick="hideJsonModal()" class="text-gray-300 hover:text-white">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto max-h-[60vh]">
+                    <pre id="jsonContent" class="bg-gray-100 p-4 rounded-lg text-sm font-mono whitespace-pre-wrap overflow-x-auto"></pre>
+                </div>
+                <div class="bg-gray-50 px-6 py-3 flex justify-end space-x-3">
+                    <button onclick="copyJsonToClipboard()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-copy mr-2"></i>
+                        Copy to Clipboard
+                    </button>
+                    <button onclick="hideJsonModal()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -889,13 +649,13 @@
                 const button = event.target.closest('button');
                 const originalText = button.innerHTML;
                 button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
-                button.classList.remove('bg-primary-600', 'hover:bg-primary-700');
+                button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
                 button.classList.add('bg-green-600');
                 
                 setTimeout(() => {
                     button.innerHTML = originalText;
                     button.classList.remove('bg-green-600');
-                    button.classList.add('bg-primary-600', 'hover:bg-primary-700');
+                    button.classList.add('bg-blue-600', 'hover:bg-blue-700');
                 }, 2000);
             }).catch(function(err) {
                 console.error('Could not copy text: ', err);
