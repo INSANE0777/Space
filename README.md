@@ -60,7 +60,7 @@ graph LR
 
 ##  **Web Dashboard**
 
-![UI](docs/Screenshot 1.png)
+![System UI](docs/Screenshot 1.png)
 
 
 ## 🚀 **Setup & Installation**
