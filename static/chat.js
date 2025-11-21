@@ -6,39 +6,101 @@ class ChatInterface {
             spacex: {
                 name: 'SpaceX Agent',
                 status: 'online',
-                icon: '🚀',
+                icon: this.getSVGIcon('rocket'),
                 description: 'Handles SpaceX launch data and mission information'
             },
             weather: {
                 name: 'Weather Agent',
                 status: 'online',
-                icon: '🌍',
+                icon: this.getSVGIcon('weather'),
                 description: 'Provides weather data and forecasts'
             },
             summary: {
                 name: 'Summary Agent',
                 status: 'online',
-                icon: '📝',
+                icon: this.getSVGIcon('document'),
                 description: 'Creates intelligent summaries and analysis'
+            },
+            satellite_data: {
+                name: 'Satellite Data Agent',
+                status: 'online',
+                icon: this.getSVGIcon('satellite'),
+                description: 'Fetches satellite tracking and orbital data'
+            },
+            anomalies_detection: {
+                name: 'Anomalies Detection Agent',
+                status: 'online',
+                icon: this.getSVGIcon('alert'),
+                description: 'Detects anomalies in space data and launch conditions'
             },
             google_adk: {
                 name: 'Google ADK',
                 status: 'online',
-                icon: '🧠',
+                icon: this.getSVGIcon('brain'),
                 description: 'AI-powered coordination and validation'
             },
             system: {
                 name: 'System',
                 status: 'online',
-                icon: '⚙️',
+                icon: this.getSVGIcon('settings'),
                 description: 'System messages and coordination'
             }
         };
         this.currentAgent = null;
-        this.isTyping = false;        this.autoScroll = true;
+        this.isTyping = false;
+        this.autoScroll = true;
         
         this.init();
         this.startUptime();
+    }
+
+    getSVGIcon(type) {
+        const icons = {
+            rocket: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+                <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+            </svg>`,
+            weather: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                <path d="M22 10a3 3 0 0 0-3-3h-2.207a5.502 5.502 0 0 0-10.702.5"></path>
+            </svg>`,
+            document: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>`,
+            brain: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44L2 10a2.5 2.5 0 0 1 0-4.96A2.5 2.5 0 0 1 4.5 2Z"></path>
+                <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44L22 10a2.5 2.5 0 0 0 0-4.96A2.5 2.5 0 0 0 19.5 2Z"></path>
+            </svg>`,
+            settings: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>`,
+            user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>`,
+            robot: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <circle cx="12" cy="16" r="1"></circle>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>`,
+            satellite: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
+            </svg>`,
+            alert: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>`
+        };
+        return icons[type] || icons.settings;
     }
 
     startUptime() {
@@ -58,7 +120,7 @@ class ChatInterface {
     init() {
         this.setupEventListeners();
         this.renderAgents();
-        this.addSystemMessage('Welcome to the Multi-Agent AI System! Ask me anything about SpaceX launches, weather, or let me coordinate multiple agents for complex tasks.');
+        this.addSystemMessage('Welcome to INTOSPACE AI! Ask me anything about SpaceX launches, weather, satellite tracking, anomaly detection, or let me coordinate multiple agents for complex space-related tasks.');
         this.setupQuickActions();
     }
 
@@ -124,11 +186,11 @@ class ChatInterface {
 
     setupQuickActions() {
         const quickActions = [
-            { text: '🚀 Find next SpaceX launch', icon: 'fas fa-rocket' },
-            { text: '🌤️ Check weather conditions', icon: 'fas fa-cloud-sun' },
-            { text: '📊 Analyze launch readiness', icon: 'fas fa-chart-line' },
-            { text: '📝 Get mission summary', icon: 'fas fa-file-alt' },
-            { text: '💾 Show raw data', icon: 'fas fa-database' }
+            { text: 'Find next SpaceX launch', icon: 'fas fa-rocket' },
+            { text: 'Check weather conditions', icon: 'fas fa-cloud-sun' },
+            { text: 'Analyze launch readiness', icon: 'fas fa-chart-line' },
+            { text: 'Get mission summary', icon: 'fas fa-file-alt' },
+            { text: 'Show raw data', icon: 'fas fa-database' }
         ];
 
         const quickActionsContainer = document.getElementById('quick-actions');
@@ -141,7 +203,7 @@ class ChatInterface {
             button.className = 'quick-action';
             button.innerHTML = `<i class="${action.icon}"></i> ${action.text}`;
             button.addEventListener('click', () => {
-                document.getElementById('chat-input').value = action.text.replace(/[🚀🌤️📊📝💾]\s/, '');
+                document.getElementById('chat-input').value = action.text;
                 this.sendMessage();
             });
             quickActionsContainer.appendChild(button);
@@ -252,22 +314,24 @@ class ChatInterface {
             </div>
         `;
         this.addMessage(jsonContent, 'system');
-    }renderMessage(message) {
+    }    renderMessage(message) {
         const messagesContainer = document.getElementById('chat-messages');
         const messageElement = document.createElement('div');
-        messageElement.className = `message ${message.type}`;
+        messageElement.className = `message ${message.type} message-bubble fade-in-up`;
         messageElement.setAttribute('data-message-id', message.id);
+        messageElement.style.opacity = '0';
+        messageElement.style.animationDelay = `${this.messages.length * 0.05}s`;
 
         const agent = message.agent ? this.agents[message.agent] : null;
-        const avatar = agent ? agent.icon : (message.type === 'user' ? '👤' : '⚙️');
+        const avatar = agent ? agent.icon : (message.type === 'user' ? this.getSVGIcon('user') : this.getSVGIcon('settings'));
         const senderName = agent ? agent.name : (message.type === 'user' ? 'You' : 'System');
 
         messageElement.innerHTML = `
-            <div class="message-avatar">
+            <div class="message-avatar float-animation">
                 ${avatar}
             </div>
             <div class="message-content">
-                <div class="message-bubble">
+                <div class="message-bubble space-hover">
                     <div class="message-text">${message.content}</div>
                 </div>
                 <div class="message-meta">
@@ -276,11 +340,11 @@ class ChatInterface {
                     <span>${this.formatTime(message.timestamp)}</span>
                 </div>
                 <div class="message-actions">
-                    <button class="message-action" onclick="copyMessage('${message.id}')">
+                    <button class="message-action button-ripple" onclick="copyMessage('${message.id}')">
                         <i class="fas fa-copy"></i> Copy
                     </button>
                     ${message.type !== 'user' ? `
-                        <button class="message-action" onclick="regenerateResponse('${message.id}')">
+                        <button class="message-action button-ripple" onclick="regenerateResponse('${message.id}')">
                             <i class="fas fa-redo"></i> Retry
                         </button>
                     ` : ''}
@@ -389,18 +453,21 @@ function regenerateResponse(messageId) {
 }
 
 function showToast(message) {
-    // Simple toast notification
+    // Simple toast notification - white theme
     const toast = document.createElement('div');
     toast.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
+        background: #000000;
+        color: #ffffff;
         padding: 12px 20px;
         border-radius: 8px;
+        border: 2px solid #000000;
         z-index: 10000;
         font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     `;
     toast.textContent = message;
     document.body.appendChild(toast);

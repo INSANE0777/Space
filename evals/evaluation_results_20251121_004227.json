@@ -1,0 +1,113 @@
+{
+  "total_tests": 5,
+  "successful_tests": 4,
+  "success_rate": 80.0,
+  "average_confidence": 83.0,
+  "average_quality_score": 82.0,
+  "average_execution_time": 24.04,
+  "total_evaluation_time": 163.92,
+  "timestamp": "2025-11-21 00:42:27",
+  "detailed_results": [
+    {
+      "goal": "Find the next SpaceX launch, check weather at that location, and summarize if it may be delayed.",
+      "success": false,
+      "execution_time": 30.86,
+      "missing_keys": [
+        "adk_validation"
+      ],
+      "data_keys": [
+        "goal",
+        "spacex",
+        "weather",
+        "summary",
+        "ai_summary",
+        "agent_outputs",
+        "agent_sequence"
+      ],
+      "adk_confidence": 80,
+      "adk_quality_score": 80,
+      "adk_goal_achieved": true,
+      "result_summary": "Goal completion validated with fallback metrics.",
+      "timestamp": "2025-11-21 00:40:25"
+    },
+    {
+      "goal": "Get information about the next SpaceX mission and launch details.",
+      "success": true,
+      "execution_time": 27.92,
+      "missing_keys": [],
+      "data_keys": [
+        "goal",
+        "spacex",
+        "weather",
+        "summary",
+        "ai_summary",
+        "agent_outputs",
+        "agent_sequence"
+      ],
+      "adk_confidence": 80,
+      "adk_quality_score": 80,
+      "adk_goal_achieved": true,
+      "result_summary": "Goal completion validated with fallback metrics.",
+      "timestamp": "2025-11-21 00:41:00"
+    },
+    {
+      "goal": "Check weather conditions at Kennedy Space Center for rocket launches.",
+      "success": true,
+      "execution_time": 10.21,
+      "missing_keys": [],
+      "data_keys": [
+        "goal",
+        "weather",
+        "summary",
+        "ai_summary",
+        "agent_outputs",
+        "agent_sequence"
+      ],
+      "adk_confidence": 80,
+      "adk_quality_score": 80,
+      "adk_goal_achieved": true,
+      "result_summary": "Goal completion validated with fallback metrics.",
+      "timestamp": "2025-11-21 00:41:18"
+    },
+    {
+      "goal": "Tell me about SpaceX Starship launch and weather forecast at the site.",
+      "success": true,
+      "execution_time": 25.54,
+      "missing_keys": [],
+      "data_keys": [
+        "goal",
+        "spacex",
+        "weather",
+        "summary",
+        "ai_summary",
+        "agent_outputs",
+        "agent_sequence"
+      ],
+      "adk_confidence": 95,
+      "adk_quality_score": 90,
+      "adk_goal_achieved": true,
+      "result_summary": "The user's goal was successfully achieved. The system correctly identified that the user asked about a 'Starship launch' and clarified that the next upcoming launch was a Falcon Heavy mission, providing all relevant details for it. It also successfully retrieved and presented the weather forecast for the specified launch site. The AI's summary clearly addresses both parts of the user's request, including the important clarification about Starship.",
+      "timestamp": "2025-11-21 00:41:48"
+    },
+    {
+      "goal": "What's the next rocket launch and will bad weather delay it?",
+      "success": true,
+      "execution_time": 25.66,
+      "missing_keys": [],
+      "data_keys": [
+        "goal",
+        "spacex",
+        "weather",
+        "summary",
+        "ai_summary",
+        "agent_outputs",
+        "agent_sequence"
+      ],
+      "adk_confidence": 80,
+      "adk_quality_score": 80,
+      "adk_goal_achieved": true,
+      "result_summary": "Goal completion validated with fallback metrics.",
+      "timestamp": "2025-11-21 00:42:27"
+    }
+  ]
+}

@@ -11,7 +11,40 @@ def run(previous_data: dict) -> dict:
     goal = previous_data.get("goal", "")
     
     # Extract word(s) to define from the goal
-    definition_result = get_word_definition(goal)
+    # Handle multiple words (e.g., "apogee" and "perigee")
+    words_to_define = extract_words_to_define(goal)
+    
+    if not words_to_define:
+        definition_result = {
+            "success": False,
+            "error": "No words found to define. Please specify words in quotes like 'apogee' or use 'define X' format.",
+            "input": goal
+        }
+    elif len(words_to_define) == 1:
+        # Single word
+        definition_result = get_word_definition(words_to_define[0])
+    else:
+        # Multiple words - get definitions for all
+        all_definitions = []
+        for word in words_to_define:
+            def_result = get_word_definition(word)
+            if def_result.get("success"):
+                all_definitions.append(def_result)
+        
+        if all_definitions:
+            definition_result = {
+                "success": True,
+                "words": words_to_define,
+                "definitions": all_definitions,
+                "input": goal
+            }
+        else:
+            definition_result = {
+                "success": False,
+                "error": f"Could not find definitions for: {', '.join(words_to_define)}",
+                "words": words_to_define,
+                "input": goal
+            }
     
     # Add definition result to the data
     previous_data.update({"definition": definition_result})
@@ -59,12 +92,53 @@ def get_word_definition(text: str) -> dict:
 
 def extract_word_to_define(text: str) -> str:
     """
-    Extract the word to define from the input text.
+    Extract the word or phrase to define from the input text.
     """
-    # Clean the text
+    original_text = text
     text = text.lower().strip()
     
-    # Remove trigger words and common phrases
+    # First, look for quoted words/phrases (e.g., "apogee", "perigee")
+    quoted_pattern = r'["\']([^"\']+)["\']'
+    quoted_matches = re.findall(quoted_pattern, original_text, re.IGNORECASE)
+    if quoted_matches:
+        # Return the first quoted phrase, or if multiple, try to find space-related terms
+        for match in quoted_matches:
+            match_clean = match.strip()
+            if len(match_clean) > 2 and len(match_clean.split()) <= 3:
+                return match_clean
+    
+    # Look for patterns like "define X", "what is X", "X means", etc.
+    patterns = [
+        r'define\s+(?:the\s+)?(?:words?\s+)?["\']?([^"\']+?)["\']?(?:\s+and\s+["\']?([^"\']+?)["\']?)?(?:\s+means?|\s*[,.]|$)',
+        r'what\s+is\s+(?:the\s+)?(?:meaning\s+of\s+)?["\']?([^"\']+?)["\']?(?:\s+means?|\s*[,.]|$)',
+        r'what\s+does\s+(?:the\s+)?["\']?([^"\']+?)["\']?(?:\s+means?|\s*[,.]|$)',
+        r'["\']?([^"\']+?)["\']?\s+means?',
+        r'explain\s+(?:what\s+)?["\']?([^"\']+?)["\']?(?:\s+is|\s*[,.]|$)',
+        r'describe\s+(?:what\s+)?["\']?([^"\']+?)["\']?(?:\s+is|\s*[,.]|$)',
+        r'look\s+up\s+(?:the\s+)?(?:definition\s+of\s+)?["\']?([^"\']+?)["\']?',
+        r'definition\s+of\s+["\']?([^"\']+?)["\']?',
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            extracted = match.group(1).strip()
+            # Clean up the extracted phrase
+            extracted = re.sub(r'[^\w\s]', '', extracted)
+            extracted = ' '.join(extracted.split())
+            
+            # Filter out common stop words at the start
+            stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'space', 'terms', 'terminology'}
+            words = extracted.split()
+            filtered_words = [w for w in words if w not in stop_words and len(w) > 2]
+            
+            if filtered_words:
+                # Try to return up to 3 words (for phrases like "orbital mechanics")
+                phrase = ' '.join(filtered_words[:3])
+                if len(phrase) > 2:
+                    return phrase
+    
+    # Fallback: remove trigger words and take first meaningful words
     trigger_patterns = [
         r'\b(define|definition|meaning|what\s+is|what\s+does|what\s+means?)\b',
         r'\b(tell\s+me\s+about|explain|describe)\b',
@@ -75,22 +149,65 @@ def extract_word_to_define(text: str) -> str:
     for pattern in trigger_patterns:
         text = re.sub(pattern, '', text, flags=re.IGNORECASE)
     
-    # Clean up extra spaces and punctuation
     text = re.sub(r'[^\w\s]', '', text)
     text = ' '.join(text.split())
-    
-    # Extract the word - take the first meaningful word
     words = text.split()
     
-    # Filter out common stop words
     stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those'}
     
-    for word in words:
-        if word not in stop_words and len(word) > 1:
-            return word
+    filtered = [w for w in words if w not in stop_words and len(w) > 1]
+    if filtered:
+        # Return up to 3 words for phrases
+        return ' '.join(filtered[:3])
     
-    # If all words are stop words, return the first one anyway
     return words[0] if words else ""
+
+
+def extract_words_to_define(text: str) -> list:
+    """
+    Extract multiple words/phrases to define from text.
+    Returns a list of words to look up.
+    """
+    words = []
+    
+    # Look for quoted words (e.g., "apogee" and "perigee")
+    quoted_pattern = r'["\']([^"\']+)["\']'
+    quoted_matches = re.findall(quoted_pattern, text, re.IGNORECASE)
+    if quoted_matches:
+        for match in quoted_matches:
+            # Split by "and" or comma to get multiple words
+            parts = re.split(r'\s+and\s+|,\s*', match, flags=re.IGNORECASE)
+            for part in parts:
+                part_clean = part.strip()
+                if len(part_clean) > 2:
+                    words.append(part_clean)
+        if words:
+            return words
+    
+    # Look for "define X and Y" pattern
+    define_pattern = r'define\s+(?:the\s+)?(?:words?\s+)?(.+?)(?:\s+means?|\s*[,.]|$)'
+    match = re.search(define_pattern, text, re.IGNORECASE)
+    if match:
+        extracted = match.group(1).strip()
+        # Remove quotes if present
+        extracted = re.sub(r'["\']', '', extracted)
+        # Split by "and" or comma
+        parts = re.split(r'\s+and\s+|,\s*', extracted, flags=re.IGNORECASE)
+        for part in parts:
+            part_clean = part.strip()
+            # Remove common stop words
+            stop_words = {'the', 'a', 'an', 'in', 'space', 'terminology', 'terms'}
+            part_words = [w for w in part_clean.split() if w.lower() not in stop_words and len(w) > 2]
+            if part_words:
+                words.append(' '.join(part_words[:2]))  # Max 2 words per term
+    
+    # If still no words, try the single word extraction
+    if not words:
+        single_word = extract_word_to_define(text)
+        if single_word:
+            words.append(single_word)
+    
+    return words
 
 def fetch_definition(word: str) -> list:
     """

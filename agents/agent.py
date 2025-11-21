@@ -12,7 +12,7 @@ MODEL = "gemini-2.5-flash"  # Or your preferred Gemini model
 
 root_agent = Agent(
     name="weather_time_agent",
-    model="gemini-2.0-flash",
+    model="gemini-2.5-flash",
     description=(
         "Agent to search anything on web and get weather report."
     ),

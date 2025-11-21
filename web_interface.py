@@ -1,16 +1,17 @@
 # web_interface.py
 # Interactive Web UI for Multi-Agent AI System
 
-from flask import Flask, render_template, request, jsonify, stream_template
+from flask import Flask, render_template, request, jsonify, stream_template, send_file
 import json
 import time
-from main import run_goal
+from main import run_goal, run_goal_realtime, REALTIME_AVAILABLE
 import sys
 import os
-sys.path.append('test-scripts')  # Add test-scripts directory to path
 from automated_evaluation import AgentSystemEvaluator
 import io
 from contextlib import redirect_stdout, redirect_stderr
+from scheduler import start_scheduler_from_config
+from notifications import notification_center
 
 app = Flask(__name__)
 
@@ -40,6 +41,31 @@ class TerminalCapture:
 
 # Global terminal capture instance
 terminal_capture = TerminalCapture()
+latest_result = None
+scheduler_instance = start_scheduler_from_config()
+
+
+def build_workflow_logs(log_entries):
+    workflow_logs = []
+    for log in log_entries:
+        log_msg = log['message']
+        agent_type = None
+
+        if 'spacex' in log_msg.lower() or '🚀' in log_msg:
+            agent_type = 'spacex'
+        elif 'weather' in log_msg.lower() or '🌍' in log_msg:
+            agent_type = 'weather'
+        elif 'summary' in log_msg.lower() or '📝' in log_msg:
+            agent_type = 'summary'
+        elif 'adk' in log_msg.lower() or '🧠' in log_msg:
+            agent_type = 'google_adk'
+
+        workflow_logs.append({
+            'message': log_msg,
+            'timestamp': log['timestamp'],
+            'agent': agent_type
+        })
+    return workflow_logs
 
 @app.route('/')
 def index():
@@ -55,6 +81,7 @@ def chat():
 def api_chat():
     """API endpoint for chat interface"""
     try:
+        global latest_result
         data = request.json
         message = data.get('message', '')
         agent = data.get('agent', None)
@@ -71,6 +98,8 @@ def api_chat():
         
         terminal_capture.write("=" * 60)
         
+        global latest_result
+
         # Capture stdout/stderr while running the goal
         old_stdout = sys.stdout
         old_stderr = sys.stderr
@@ -80,8 +109,14 @@ def api_chat():
             sys.stdout = terminal_capture
             sys.stderr = terminal_capture
             
-            # Run the goal/message as a task
-            result = run_goal(message)
+            # Check if real-time mode is requested
+            use_realtime = data.get('realtime', False) and REALTIME_AVAILABLE
+            if use_realtime:
+                terminal_capture.write("🚀 Real-time mode enabled - breaking problem into sub-tasks...")
+                result = run_goal_realtime(message)
+            else:
+                result = run_goal(message)
+            latest_result = result
             
             terminal_capture.write("=" * 60)
             terminal_capture.write("✅ Task completed successfully!")
@@ -92,26 +127,7 @@ def api_chat():
             sys.stderr = old_stderr
         
         # Process logs to extract agent-specific information
-        workflow_logs = []
-        for log in terminal_capture.logs:
-            log_msg = log['message']
-            agent_type = None
-            
-            # Detect which agent is speaking
-            if 'spacex' in log_msg.lower() or '🚀' in log_msg:
-                agent_type = 'spacex'
-            elif 'weather' in log_msg.lower() or '🌍' in log_msg:
-                agent_type = 'weather'
-            elif 'summary' in log_msg.lower() or '📝' in log_msg:
-                agent_type = 'summary'
-            elif 'adk' in log_msg.lower() or '🧠' in log_msg:
-                agent_type = 'google_adk'
-            
-            workflow_logs.append({
-                'message': log_msg,
-                'timestamp': log['timestamp'],
-                'agent': agent_type
-            })
+        workflow_logs = build_workflow_logs(terminal_capture.logs)
         
         return jsonify({
             'success': True,
@@ -155,8 +171,14 @@ def api_run_goal():
             sys.stdout = terminal_capture
             sys.stderr = terminal_capture
             
-            # Run the goal
-            result = run_goal(goal)
+            # Check if real-time mode is requested
+            use_realtime = data.get('realtime', False) and REALTIME_AVAILABLE
+            if use_realtime:
+                terminal_capture.write("🚀 Real-time mode enabled - breaking problem into sub-tasks...")
+                result = run_goal_realtime(goal)
+            else:
+                result = run_goal(goal)
+            latest_result = result
             
             terminal_capture.write("=" * 60)
             terminal_capture.write("✅ Goal execution completed successfully!")
@@ -166,10 +188,13 @@ def api_run_goal():
             sys.stdout = old_stdout
             sys.stderr = old_stderr
         
+        workflow_logs = build_workflow_logs(terminal_capture.logs)
+        
         return jsonify({
             'success': True,
             'result': result,
             'logs': terminal_capture.logs,
+            'workflow_logs': workflow_logs,
             'timestamp': time.strftime('%Y-%m-%d %H:%M:%S')
         })
         
@@ -260,8 +285,13 @@ def agent_status():
                 'spacex_agent',
                 'weather_agent', 
                 'summary_agent',
+                'calculator_agent',
+                'dictionary_agent',
+                'news_agent',
                 'google_adk_agent'
-            ]
+            ],
+            'scheduler_enabled': scheduler_instance is not None,
+            'realtime_available': REALTIME_AVAILABLE
         })
         
     except Exception as e:
@@ -269,6 +299,41 @@ def agent_status():
             'status': 'error',
             'error': str(e)
         })
+
+
+@app.route('/api/notifications')
+def get_notifications():
+    return jsonify({
+        'notifications': notification_center.list_events()
+    })
+
+
+@app.route('/api/schedules')
+def list_schedules():
+    if not scheduler_instance:
+        return jsonify({'enabled': False, 'tasks': []})
+    return jsonify({
+        'enabled': True,
+        'tasks': scheduler_instance.list_tasks()
+    })
+
+
+@app.route('/api/report/latest')
+def download_report():
+    if not latest_result:
+        return jsonify({'error': 'No runs recorded yet'}), 404
+    return jsonify({
+        'generated_at': time.strftime('%Y-%m-%d %H:%M:%S'),
+        'result': latest_result
+    })
+
+
+@app.route('/system-diagram')
+def serve_system_diagram():
+    diagram_path = os.path.join('docs', 'WorkFlow_Diagram.png')
+    if os.path.exists(diagram_path):
+        return send_file(diagram_path, mimetype='image/png')
+    return jsonify({'error': 'Diagram not found'}), 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

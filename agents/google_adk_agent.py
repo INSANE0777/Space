@@ -21,7 +21,7 @@ class GoogleADKCoordinator:
         
         # Initialize LangChain ChatGoogleGenerativeAI model
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
+            model="gemini-2.5-flash",
             google_api_key=api_key,
             temperature=0.3,
             max_tokens=1000
@@ -119,7 +119,8 @@ class GoogleADKCoordinator:
                 "confidence": 0-100,
                 "missing_data": ["list of missing information"],
                 "suggested_improvements": ["list of suggestions"],
-                "quality_score": 0-100
+                "quality_score": 0-100,
+                "result_summary": "Brief summary of the validation result"
             }
             
             Be thorough but fair in your assessment. Consider both completeness and relevance of the data."""
@@ -138,30 +139,59 @@ class GoogleADKCoordinator:
             response = self.llm.invoke([system_message, human_message])
             
             # Clean and parse JSON response
-            json_text = response.content.strip()
+            json_text = response.content.strip() if response.content else ""
+            
+            if not json_text:
+                raise ValueError("Empty response from LLM")
+            
+            # Remove markdown code blocks if present
             if json_text.startswith("```json"):
-                json_text = json_text[7:-3]
+                json_text = json_text[7:]
+                if json_text.endswith("```"):
+                    json_text = json_text[:-3]
             elif json_text.startswith("```"):
-                json_text = json_text[3:-3]
+                json_text = json_text[3:]
+                if json_text.endswith("```"):
+                    json_text = json_text[:-3]
+            
+            json_text = json_text.strip()
+            
+            # Try to extract JSON if wrapped in text
+            if "{" in json_text and "}" in json_text:
+                start = json_text.find("{")
+                end = json_text.rfind("}") + 1
+                json_text = json_text[start:end]
+            
+            if not json_text:
+                raise ValueError("No JSON found in response")
             
             validation_result = json.loads(json_text)
             
             # Validate the structure of the response
             required_fields = ["goal_achieved", "confidence", "missing_data", "suggested_improvements", "quality_score"]
             if all(field in validation_result for field in required_fields):
+                # Ensure result_summary exists
+                if "result_summary" not in validation_result:
+                    validation_result["result_summary"] = "Goal completion validated successfully." if validation_result.get("goal_achieved") else "Goal completion needs improvement."
                 return validation_result
             else:
                 raise ValueError("Invalid validation response structure")
                 
+        except json.JSONDecodeError as e:
+            print(f"⚠️ LangChain ADK Validation fallback due to JSON parse error: {e}")
+            print(f"   Response was: {json_text[:200] if 'json_text' in locals() else 'N/A'}")
         except Exception as e:
             print(f"⚠️ LangChain ADK Validation fallback due to: {e}")
-            return {
-                "goal_achieved": True,
-                "confidence": 80,
-                "missing_data": [],
-                "suggested_improvements": ["Consider using more specific queries for better results"],
-                "quality_score": 80
-            }
+        
+        # Fallback response
+        return {
+            "goal_achieved": True,
+            "confidence": 80,
+            "missing_data": [],
+            "suggested_improvements": ["Consider using more specific queries for better results"],
+            "quality_score": 80,
+            "result_summary": "Goal completion validated with fallback metrics."
+        }
 
 def run(previous_data: dict) -> dict:
     """

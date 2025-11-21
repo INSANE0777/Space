@@ -29,3 +29,11 @@ def get_dictionary_agent():
 def get_news_agent():
     from . import news_agent
     return news_agent
+
+def get_satellite_data_agent():
+    from . import satellite_data_agent
+    return satellite_data_agent
+
+def get_anomalies_detection_agent():
+    from . import anomalies_detection_agent
+    return anomalies_detection_agent

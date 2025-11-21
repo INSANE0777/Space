@@ -1,0 +1,13 @@
+{
+  "tasks": [
+    {
+      "id": "next_launch_watch",
+      "goal": "Explain current SpaceX assets",
+      "interval_seconds": 3600,
+      "change_key": "spacex",
+      "notify_on_change": true,
+      "enabled": true
+    }
+  ]
+}
+
